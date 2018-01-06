@@ -45,4 +45,9 @@ $injector->define('RandomFlix\Page\FilePageReader', [
 $injector->alias('RandomFlix\Menu\MenuReader', 'RandomFlix\Menu\ArrayMenuReader');
 $injector->share('RandomFlix\Menu\ArrayMenuReader');
 
+//REST client
+$injector->alias('RandomFlix\Services\NetflixRouletteClient', 'RandomFlix\Services\NetflixRouletteClient');
+$injector->share('RandomFlix\Services\NetflixRouletteClient');
+
+
 return $injector;
