@@ -2,9 +2,13 @@
 
 namespace RandomFlix;
 
-use Exception;
+use FastRoute\Dispatcher;
+use FastRoute\RouteCollector;
+use function FastRoute\simpleDispatcher;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 
 require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
@@ -26,4 +30,34 @@ if ($environment !== 'production') {
 }
 $whoops->register();
 
-throw Exception;
+$request = Request::createFromGlobals();
+$response = new Response();
+
+
+$routeDefinitionCallback = function (RouteCollector $r) {
+    $routes = include('Routes.php');
+    foreach ($routes as $route) {
+        $r->addRoute($route[0], $route[1], $route[2]);
+    }
+};
+
+$dispatcher = simpleDispatcher($routeDefinitionCallback);
+
+$routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getPathInfo());
+switch ($routeInfo[0]) {
+    case Dispatcher::NOT_FOUND:
+        $response->setStatusCode(Response::HTTP_NOT_FOUND);
+        $response->send();
+        break;
+    case Dispatcher::METHOD_NOT_ALLOWED:
+        $response->setContent('405 - Method not allowed');
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED);
+        $response->send();
+        break;
+    case Dispatcher::FOUND:
+        $handler = $routeInfo[1];
+        $vars = $routeInfo[2];
+        call_user_func($handler, $vars);
+        break;
+}
