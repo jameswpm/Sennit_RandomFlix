@@ -2,7 +2,7 @@
 
 namespace RandomFlix\Controllers;
 
-use RandomFlix\Template\Renderer;
+use RandomFlix\Template\FrontendTwigRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +18,7 @@ class Home
     private $response;
     private $renderer;
 
-    public function __construct(Request $request, Response $response, Renderer $renderer)
+    public function __construct(Request $request, Response $response, FrontendTwigRenderer $renderer)
     {
         $this->request = $request;
         $this->response = $response;
@@ -28,7 +28,8 @@ class Home
     public function show()
     {
         $data = [
-            'name' => $this->request->query->get('name', 'stranger')
+            'name' => $this->request->query->get('name', 'stranger'),
+            'menuItems' => [['href' => '/', 'text' => 'Homepage']],
         ];
         $html = $this->renderer->render('Homepage', $data);
         $this->response->setContent($html);

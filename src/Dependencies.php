@@ -24,21 +24,25 @@ $injector->share('Symfony\Component\HttpFoundation\Response');
 $injector->define('Symfony\Component\HttpFoundation\Response', []);
 
 //Templating
-$injector->define('Mustache_Engine', [
-    ':options' => [
-        'loader' => new Mustache_Loader_FilesystemLoader(dirname(__DIR__) . '/templates', [
-            'extension' => '.html',
-        ]),
-    ],
-]);
-$injector->alias('RandomFlix\Template\Renderer', 'RandomFlix\Template\MustacheRenderer');
+$injector->alias('RandomFlix\Template\Renderer', 'RandomFlix\Template\TwigRenderer');
+$injector->delegate('Twig_Environment', function () use ($injector) {
+    $loader = new Twig_Loader_Filesystem(dirname(__DIR__) . '/templates');
+    $twig = new Twig_Environment($loader);
+    return $twig;
+});
+$injector->alias('RandomFlix\Template\FrontendRenderer', 'Example\Template\FrontendTwigRenderer');
+
 
 //Pages controller
+$injector->alias('RandomFlix\Page\PageReader', 'Example\Page\FilePageReader');
+$injector->share('RandomFlix\Page\FilePageReader');
+
 $injector->define('RandomFlix\Page\FilePageReader', [
     ':pageFolder' => __DIR__ . '/../pages',
 ]);
 
-$injector->alias('RandomFlix\Page\PageReader', 'Example\Page\FilePageReader');
-$injector->share('RandomFlix\Page\FilePageReader');
+//Menu
+$injector->alias('RandomFlix\Menu\MenuReader', 'RandomFlix\Menu\ArrayMenuReader');
+$injector->share('RandomFlix\Menu\ArrayMenuReader');
 
 return $injector;

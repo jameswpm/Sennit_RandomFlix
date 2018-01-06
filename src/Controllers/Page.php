@@ -3,7 +3,7 @@
 namespace RandomFlix\Controllers;
 
 use RandomFlix\Page\InvalidPageException;
-use RandomFlix\Template\Renderer;
+use RandomFlix\Template\FrontendTwigRenderer;
 use Symfony\Component\HttpFoundation\Response;
 use RandomFlix\Page\FilePageReader;
 
@@ -13,7 +13,7 @@ class Page
     private $renderer;
     private $pageReader;
 
-    public function __construct(Response $response, Renderer $renderer, FilePageReader $pageReader)
+    public function __construct(Response $response, FrontendTwigRenderer $renderer, FilePageReader $pageReader)
     {
         $this->response = $response;
         $this->renderer = $renderer;
