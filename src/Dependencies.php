@@ -33,4 +33,12 @@ $injector->define('Mustache_Engine', [
 ]);
 $injector->alias('RandomFlix\Template\Renderer', 'RandomFlix\Template\MustacheRenderer');
 
+//Pages controller
+$injector->define('RandomFlix\Page\FilePageReader', [
+    ':pageFolder' => __DIR__ . '/../pages',
+]);
+
+$injector->alias('RandomFlix\Page\PageReader', 'Example\Page\FilePageReader');
+$injector->share('RandomFlix\Page\FilePageReader');
+
 return $injector;

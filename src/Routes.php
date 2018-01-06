@@ -2,7 +2,5 @@
 
 return [
     ['GET', '/hello-world', ['RandomFlix\Controllers\Home', 'show']],
-    ['GET', '/another-route', function () {
-        echo 'This works too';
-    }],
+    ['GET', '/{slug}', ['RandomFlix\Controllers\Page', 'show']],
 ];
