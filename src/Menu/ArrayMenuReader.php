@@ -8,6 +8,7 @@ class ArrayMenuReader implements MenuReader
     {
         return [
             ['href' => '/', 'text' => 'Homepage'],
+            ['href' => '/page-one', 'text' => 'Get a Movie!'],
         ];
     }
 }
