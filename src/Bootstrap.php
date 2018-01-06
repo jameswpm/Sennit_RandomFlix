@@ -7,8 +7,6 @@ use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 
 require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
@@ -30,8 +28,10 @@ if ($environment !== 'production') {
 }
 $whoops->register();
 
-$request = Request::createFromGlobals();
-$response = new Response();
+$injector = include('Dependencies.php');
+
+$request = $injector->make('Symfony\Component\HttpFoundation\Request');
+$response = $injector->make('Symfony\Component\HttpFoundation\Response');
 
 
 $routeDefinitionCallback = function (RouteCollector $r) {
@@ -56,8 +56,12 @@ switch ($routeInfo[0]) {
         $response->send();
         break;
     case Dispatcher::FOUND:
-        $handler = $routeInfo[1];
+        $className = $routeInfo[1][0];
+        $method = $routeInfo[1][1];
         $vars = $routeInfo[2];
-        call_user_func($handler, $vars);
+
+        $class = $injector->make($className);
+        $class->$method($vars);
+
         break;
 }
